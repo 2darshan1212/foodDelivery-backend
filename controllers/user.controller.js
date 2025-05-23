@@ -120,6 +120,7 @@ export const login = async (req, res) => {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1 * 24 * 60 * 60 * 1000,
+      path: "/",
     };
     
     // In production, cookies with SameSite=None must also be Secure
@@ -127,8 +128,11 @@ export const login = async (req, res) => {
       cookieOptions.secure = true;
     }
     
+    // Set the cookie
+    res.cookie("token", token, cookieOptions);
+    
+    // Return the token in the response body as well (for JWT auth fallback)
     return res
-      .cookie("token", token, cookieOptions)
       .json({
         message: `Welcome Back ${user.username}`,
         success: true,

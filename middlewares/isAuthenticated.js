@@ -3,14 +3,27 @@ import { User } from "../models/user.model.js";
 
 const isAuthenticated = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    // Check for token in cookies first
+    let token = req.cookies?.token;
+    
+    // If no token in cookies, check Authorization header
     if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+    
+    // If still no token, return 401
+    if (!token) {
+      console.log('No authentication token found in request');
       return res.status(401).json({
         message: "User Not Authenticated",
         success: false,
       });
     }
     
+    // Verify the token
     const decode = jwt.verify(token, process.env.SECRET_KEY);
     if (!decode) {
       return res.status(401).json({
