@@ -28,9 +28,9 @@ app.use(
   cors({
     origin: function(origin, callback) {
       const allowedOrigins = [
-        'http://localhost:5173',
-        'http://localhost:3000',
-        'https://food-delivery-frontend-tmav.vercel.app',
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://food-delivery-frontend-r4bs.vercel.app",
         // Add any other frontend URLs that might access your API
       ];
       
