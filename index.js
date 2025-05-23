@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: "https://food-delivery-frontend-k28g.vercel.app",
+    origin: "https://food-delivery-frontend-tmav.vercel.app",
     credentials: true,
   })
 );
