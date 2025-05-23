@@ -101,15 +101,12 @@ const gracefulShutdown = async (signal) => {
 
     // Close the server
     console.log("Closing HTTP server...");
-    server.close(() => {
+    server.close(async() => {
       console.log("HTTP server closed.");
 
       // Close database connection
       console.log("Closing database connection...");
-      mongoose.connection.close(false, () => {
-        console.log("Database connection closed.");
-        process.exit(0);
-      });
+       await mongoose.connection.close();
     });
 
     // Force close after timeout
