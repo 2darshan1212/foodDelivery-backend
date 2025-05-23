@@ -27,10 +27,10 @@ const PORT = process.env.PORT || 3000;
 app.use(
   cors({
     // When using credentials, you MUST specify exact origins, not wildcards
-    origin: 'https://food-delivery-frontend-r4bs.vercel.app',
+    origin: "https://food-delivery-frontend-r4bs.vercel.app",
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
@@ -104,12 +104,12 @@ const gracefulShutdown = async (signal) => {
 
     // Close the server
     console.log("Closing HTTP server...");
-    server.close(async() => {
+    server.close(async () => {
       console.log("HTTP server closed.");
 
       // Close database connection
       console.log("Closing database connection...");
-       await mongoose.connection.close();
+      await mongoose.connection.close();
     });
 
     // Force close after timeout
