@@ -4,7 +4,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
 import mongoose from "mongoose";
-import { setupChangeStreams, closeChangeStreams } from "./utils/changeStreams.js";
+import {
+  setupChangeStreams,
+  closeChangeStreams,
+} from "./utils/changeStreams.js";
 import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.route.js";
 import storyRoute from "./routes/storyRoutes.js";
@@ -22,7 +25,7 @@ const PORT = process.env.PORT || 3000;
 //middlewares
 app.use(
   cors({
-    origin: "https://food-delivery-frontend-r4bs.vercel.app/",
+    origin: "*",
     credentials: true,
   })
 );
@@ -89,48 +92,48 @@ server.listen(PORT, async () => {
 // Graceful shutdown handling
 const gracefulShutdown = async (signal) => {
   console.log(`Received ${signal}. Starting graceful shutdown...`);
-  
+
   try {
     // Close change streams first
-    console.log('Closing change streams...');
+    console.log("Closing change streams...");
     await closeChangeStreams();
-    
+
     // Close the server
-    console.log('Closing HTTP server...');
+    console.log("Closing HTTP server...");
     server.close(() => {
-      console.log('HTTP server closed.');
-      
+      console.log("HTTP server closed.");
+
       // Close database connection
-      console.log('Closing database connection...');
+      console.log("Closing database connection...");
       mongoose.connection.close(false, () => {
-        console.log('Database connection closed.');
+        console.log("Database connection closed.");
         process.exit(0);
       });
     });
-    
+
     // Force close after timeout
     setTimeout(() => {
-      console.error('Forced shutdown after timeout!');
+      console.error("Forced shutdown after timeout!");
       process.exit(1);
     }, 10000);
   } catch (error) {
-    console.error('Error during shutdown:', error);
+    console.error("Error during shutdown:", error);
     process.exit(1);
   }
 };
 
 // Set up signal handlers for graceful shutdown
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
 // Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  gracefulShutdown('uncaughtException');
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+  gracefulShutdown("uncaughtException");
 });
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  gracefulShutdown('unhandledRejection');
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  gracefulShutdown("unhandledRejection");
 });
