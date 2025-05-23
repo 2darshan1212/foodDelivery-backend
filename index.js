@@ -26,8 +26,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
-    // Instead of a function, use a simpler configuration that allows all vercel.app domains
-    origin: '*', // Allow all origins for now to quickly debug the issue
+    // When using credentials, you MUST specify exact origins, not wildcards
+    origin: 'https://food-delivery-frontend-r4bs.vercel.app',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
