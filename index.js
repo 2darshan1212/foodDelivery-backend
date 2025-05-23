@@ -24,9 +24,7 @@ dotenv.config({});
 const PORT = process.env.PORT || 3000;
 //middlewares
 
-const allowedOrigins = [
-  "https://food-delivery-frontend-5rti6vl31-2darshan1212s-projects.vercel.app",
-];
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", allowedOrigins[0]);
   res.header(
@@ -38,13 +36,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin:"https://food-delivery-frontend-5rti6vl31-2darshan1212s-projects.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
