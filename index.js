@@ -23,9 +23,19 @@ dotenv.config({});
 
 const PORT = process.env.PORT || 3000;
 //middlewares
+
+
+const allowedOrigins = ["https://food-delivery-frontend-ten-drab.vercel.app"];
+
 app.use(
   cors({
-    origin: "https://food-delivery-frontend-ten-drab.vercel.app",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
