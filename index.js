@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 3000;
 //middlewares
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://food-delivery-frontend-r4bs.vercel.app/",
     credentials: true,
   })
 );
@@ -47,7 +47,7 @@ app.use("/api/v1/delivery", deliveryAgentRoute);
 
 //Routes
 app.get("/", (req, res) => {
-  res.send("welcome to instapic");
+  res.send("welcome to food delivery app");
 });
 
 // API health check
