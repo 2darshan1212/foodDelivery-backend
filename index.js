@@ -24,8 +24,9 @@ dotenv.config({});
 const PORT = process.env.PORT || 3000;
 //middlewares
 
-
-const allowedOrigins = ["https://food-delivery-frontend-ten-drab.vercel.app"];
+const allowedOrigins = [
+  "https://food-delivery-frontend-5rti6vl31-2darshan1212s-projects.vercel.app/",
+];
 
 app.use(
   cors({
