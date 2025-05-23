@@ -115,12 +115,20 @@ export const login = async (req, res) => {
       isAdmin: user.isAdmin || false,
     };
 
+    // Configure cookie options based on environment
+    const cookieOptions = {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 1 * 24 * 60 * 60 * 1000,
+    };
+    
+    // In production, cookies with SameSite=None must also be Secure
+    if (process.env.NODE_ENV === "production") {
+      cookieOptions.secure = true;
+    }
+    
     return res
-      .cookie("token", token, {
-        httpOnly: true,
-        sameSite: "strict",
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-      })
+      .cookie("token", token, cookieOptions)
       .json({
         message: `Welcome Back ${user.username}`,
         success: true,
