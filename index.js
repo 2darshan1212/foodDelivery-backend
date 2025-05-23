@@ -27,6 +27,14 @@ const PORT = process.env.PORT || 3000;
 const allowedOrigins = [
   "https://food-delivery-frontend-5rti6vl31-2darshan1212s-projects.vercel.app/",
 ];
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", allowedOrigins[0]);
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  next();
+});
 
 app.use(
   cors({
@@ -45,14 +53,7 @@ app.use(
 // Make io available throughout the app
 app.set("io", io);
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", allowedOrigins[0]);
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  next();
-});
+
 
 
 app.use(express.json());
