@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3000;
 //middlewares
 
 const allowedOrigins = [
-  "https://food-delivery-frontend-5rti6vl31-2darshan1212s-projects.vercel.app/",
+  "https://food-delivery-frontend-5rti6vl31-2darshan1212s-projects.vercel.app",
 ];
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", allowedOrigins[0]);
