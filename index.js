@@ -25,7 +25,8 @@ const PORT = process.env.PORT || 3000;
 //middlewares
 app.use(
   cors({
-    origin: "*",
+    origin:
+      "https://food-delivery-frontend-48ocqjcgl-2darshan1212s-projects.vercel.app/",
     credentials: true,
   })
 );
