@@ -27,7 +27,7 @@ const PORT = process.env.PORT || 3000;
 app.use(
   cors({
     origin:
-      "https://food-delivery-frontend-q478-9jznon7if-2darshan1212s-projects.vercel.app",
+      "https://food-delivery-frontend-q478-acapefam1-2darshan1212s-projects.vercel.app",
     credentials: true,
   })
 );
