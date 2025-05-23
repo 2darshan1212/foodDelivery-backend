@@ -3,6 +3,9 @@ import { User } from "../models/user.model.js";
 
 const isAuthenticated = async (req, res, next) => {
   try {
+    console.log('Auth headers received:', req.headers.authorization ? 'Authorization header present' : 'No Authorization header');
+    console.log('Cookies received:', req.cookies?.token ? 'Token cookie present' : 'No token cookie');
+
     // Check for token in cookies first
     let token = req.cookies?.token;
     
