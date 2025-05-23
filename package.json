@@ -1,0 +1,34 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "check-env": "node scripts/checkEnvironment.js",
+    "dev": "node scripts/checkEnvironment.js && nodemon index.js",
+    "start": "node scripts/checkEnvironment.js && node index.js",
+    "debug-start": "node scripts/checkEnvironment.js && node scripts/startServer.js",
+    "migrate-ratings": "node scripts/migrateRatings.js",
+    "make-admin": "node scripts/makeAdmin.js",
+    "list-users": "node scripts/listUsers.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.6.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "datauri": "^4.1.0",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.14.1",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.5",
+    "socket.io": "^4.8.1",
+    "streamifier": "^0.1.1"
+  }
+}
