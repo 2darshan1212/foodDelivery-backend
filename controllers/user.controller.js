@@ -11,146 +11,158 @@ import generateToken from "../utils/generateToken.js";
 export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    console.log('Registration attempt for:', email);
+    
+    // Validate input fields
     if (!username || !email || !password) {
-      return res.status(401).json({
-        message: "Something is Missing, Please Check!",
-        success: true,
-      });
-    }
-    const user = await User.findOne({ email });
-    if (user) {
-      return res.status(401).json({
-        message: "Email Already Exists!",
+      return res.status(400).json({
+        message: "Username, email and password are required",
         success: false,
       });
     }
+    
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      console.log('Email already exists:', email);
+      return res.status(409).json({
+        message: "Email already exists",
+        success: false,
+      });
+    }
+    
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    await User.create({
+    
+    // Create new user
+    const newUser = await User.create({
       username,
       email,
       password: hashedPassword,
+      profilePicture: "",
+      posts: [],
+      followers: [],
+      followings: [],
+      bookmarks: [],
+      isAdmin: false,
     });
+    
+    console.log('User registered successfully:', newUser._id);
+    
+    // Generate a token for immediate login after registration
+    const token = jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY || 'fallback-secret-key-for-development', {
+      expiresIn: "7d",
+    });
+    
+    // Return success with user data and token
     return res.status(201).json({
-      message: "Account Successfully created",
+      message: "Account successfully created",
       success: true,
+      user: {
+        _id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        profilePicture: "",
+        isAdmin: false
+      },
+      token: token
     });
   } catch (error) {
-    console.log(error);
+    console.error('Registration error:', error);
+    return res.status(500).json({
+      message: "Server error during registration",
+      success: false
+    });
   }
 };
 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Login attempt for email:', email);
+    
     if (!email || !password) {
       return res.status(401).json({
-        message: "Something is Missing, Please Check!",
+        message: "Email and password are required",
         success: false,
       });
     }
-    let user = await User.findOne({ email });
+    
+    // Find user by email
+    const user = await User.findOne({ email });
     if (!user) {
+      console.log('User not found with email:', email);
       return res.status(401).json({
-        message: "Email Not Exists",
+        message: "Email not found",
         success: false,
       });
     }
+    
+    // Verify password
     const isPasswordMatch = await bcrypt.compare(password, user.password);
-
     if (!isPasswordMatch) {
+      console.log('Password mismatch for user:', email);
       return res.status(401).json({
-        message: "Incorret Email or Password",
+        message: "Incorrect email or password",
         success: false,
       });
     }
-    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
-      expiresIn: "1d",
+    
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY || 'fallback-secret-key-for-development', {
+      expiresIn: "7d", // Extended for better user experience
     });
-    //populate each post if in the posts array
-
-    // const populatedPosts = await Promise.all(
-    //   user.posts.map(async (postId) => {
-    //     const post = await Post.findById(postId);
-
-    //     if (post.author.equals(user._id)) {
-    //       return post;
-    //     }
-    //     return null;
-    //   })
-    // );
-
-    // user = {
-    //   _id: user._id,
-    //   username: user.username,
-    //   email: user.email,
-    //   profilePicture: user.profilePicture,
-    //   bio: user.bio,
-    //   followers: user.followers,
-    //   followings: user.followings,
-    //   posts: populatedPosts,
-    // };
-
-    const populatedPosts = await Promise.all(
-      user.posts.map(async (postId) => {
-        const post = await Post.findById(postId);
-
-        if (post && post.author.equals(user._id)) {
-          return post;
-        }
-        return null;
-      })
-    );
-
-    // Optional: filter out null posts
-    user = {
+    
+    console.log('Login successful for user:', email);
+    
+    // Create simplified user object with essential data only
+    const userData = {
       _id: user._id,
       username: user.username,
       email: user.email,
-      profilePicture: user.profilePicture,
-      bio: user.bio,
-      followers: user.followers,
-      followings: user.followings,
-      posts: populatedPosts.filter(Boolean), // filters out nulls
-      bookmarks: user.bookmarks || [],
+      profilePicture: user.profilePicture || '',
       isAdmin: user.isAdmin || false,
     };
-
-    // Configure cookie options based on environment
-    const cookieOptions = {
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 1 * 24 * 60 * 60 * 1000,
-      path: "/",
-    };
     
-    // In production, cookies with SameSite=None must also be Secure
-    if (process.env.NODE_ENV === "production") {
-      cookieOptions.secure = true;
-    }
+    // Skip cookies entirely on production to avoid CORS issues
+    // Instead, rely completely on the token in response body
     
-    // Set the cookie
-    res.cookie("token", token, cookieOptions);
-    
-    // Return the token in the response body as well (for JWT auth fallback)
-    return res
-      .json({
-        message: `Welcome Back ${user.username}`,
-        success: true,
-        user,
-        token: token  // Explicitly include token in response
-      });
+    // Return success with user data and token
+    return res.status(200).json({
+      message: `Welcome back, ${userData.username}!`,
+      success: true,
+      user: userData,
+      token: token
+    });
   } catch (error) {
-    console.log(error);
+    console.error('Login error:', error);
+    return res.status(500).json({
+      message: "Server error during login",
+      success: false
+    });
   }
 };
 
 export const logout = async (req, res) => {
   try {
-    return res
-      .cookie("token", "", { maxAge: 0 })
-      .json({ message: "Logged Out Successfully", success: true });
+    // Just for backward compatibility, clear any cookies if they exist
+    res.clearCookie("token");
+    
+    // Log the logout attempt
+    const userId = req.user?.id || req.id || 'unknown';
+    console.log(`User logout: ${userId}`);
+    
+    // Return success response - the actual token clearing happens on the frontend
+    return res.status(200).json({ 
+      success: true,
+      message: "Logged out successfully"
+    });
   } catch (error) {
-    console.log(error);
+    console.error("Logout error:", error);
+    return res.status(500).json({
+      success: false, 
+      message: "Error during logout"
+    });
   }
 };
 

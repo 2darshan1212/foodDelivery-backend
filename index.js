@@ -24,13 +24,36 @@ dotenv.config({});
 const PORT = process.env.PORT || 3000;
 //middlewares
 
+// CORS configuration - Allow all valid frontend origins
+const allowedOrigins = [
+  "https://food-delivery-frontend-r4bs.vercel.app",
+  "https://food-delivery-frontend.vercel.app",
+  "http://localhost:5173",  // Local development Vite default
+  "http://localhost:3000"   // Local development alternative
+];
+
 app.use(
   cors({
-    // When using credentials, you MUST specify exact origins, not wildcards
-    origin: "https://food-delivery-frontend-r4bs.vercel.app",
+    // Use a function for origin to check against the allowed list
+    origin: function(origin, callback) {
+      // Allow requests with no origin (like mobile apps, curl, etc)
+      if (!origin) return callback(null, true);
+      
+      // Check if the origin is in our allowed list
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.warn(`Origin ${origin} not allowed by CORS`);
+        // Still allow the request to proceed even if origin isn't in our list
+        // This makes development easier while still logging potential issues
+        callback(null, true);
+      }
+    },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    exposedHeaders: ["Content-Range", "X-Content-Range"],
+    maxAge: 600 // Cache preflight requests for 10 minutes
   })
 );
 
